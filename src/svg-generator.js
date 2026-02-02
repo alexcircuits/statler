@@ -136,9 +136,9 @@ function generateCard(stats, options = {}) {
 
   height += 10; // Bottom padding
 
+  const internalWidth = fullWidth ? 500 : 450;
   const cardWidth = fullWidth ? "100%" : "450";
   const cardHeight = fullWidth ? "auto" : height;
-  const internalWidth = 450;
 
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}" viewBox="0 0 ${internalWidth} ${height}" fill="none">
   <defs>
@@ -165,25 +165,25 @@ function generateCard(stats, options = {}) {
   ${showName ? `
   <g transform="translate(25, 35)">
     <text class="card title">${escapeXml(stats.name || username)}</text>
-  </g>
-  
-  <!-- Rank -->
-  <g transform="translate(400, 30)">
-     <circle cx="0" cy="0" r="18" fill="none" stroke="#21262d" stroke-width="3"/>
-     <circle cx="0" cy="0" r="18" fill="none" stroke="${rank.color}" stroke-dasharray="${2 * Math.PI * 18 * (rank.percentile / 100)} 1000" transform="rotate(-90)" class="rank-circle"/>
-     <text x="0" y="5" text-anchor="middle" class="card rank-text">${rank.level}</text>
   </g>` : ''}
+  
+  <!-- Rank Circle -->
+  <g transform="translate(${internalWidth - 45}, ${showName ? 85 : 45})">
+     <circle cx="0" cy="0" r="22" fill="none" stroke="#21262d" stroke-width="4"/>
+     <circle cx="0" cy="0" r="22" fill="none" stroke="${rank.color}" stroke-dasharray="${2 * Math.PI * 22 * (rank.percentile / 100)} 1000" transform="rotate(-90)" class="rank-circle"/>
+     <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="card rank-text">${rank.level}</text>
+  </g>
 `;
 
   for (const section of sections) {
     if (section.type === 'stats') {
       svg += generateStatsSection(stats, section.y, accent);
     } else if (section.type === 'languages') {
-      svg += generateLanguagesSection(stats.languages, section.y, accent);
+      svg += generateLanguagesSection(stats.languages, section.y, accent, internalWidth);
     } else if (section.type === 'streak') {
-      svg += generateStreakSection({ ...stats, totalContributions }, section.y, accent);
+      svg += generateStreakSection({ ...stats, totalContributions }, section.y, accent, internalWidth);
     } else if (section.type === 'activity') {
-      svg += generateActivitySection(stats.recentActivity, section.y, accent, borderColor);
+      svg += generateActivitySection(stats.recentActivity, section.y, accent, borderColor, internalWidth);
     }
   }
 
@@ -210,7 +210,7 @@ function generateStatsSection(stats, y, accent) {
     // 2 columns
     const col = i % 2;
     const row = Math.floor(i / 2);
-    const x = col * 200;
+    const x = col * 165; // Closer together
     const itemY = row * 40;
 
     svg += `
@@ -225,7 +225,8 @@ function generateStatsSection(stats, y, accent) {
   return svg;
 }
 
-function generateLanguagesSection(languages, y, accent) {
+function generateLanguagesSection(languages, y, accent, internalWidth) {
+  const width = internalWidth - 50; // Padding
   let svg = `
   <g transform="translate(25, ${y})">
     <text class="card section-title">Top Languages</text>
@@ -233,16 +234,16 @@ function generateLanguagesSection(languages, y, accent) {
     <!-- Progress Bar -->
     <g transform="translate(0, 15)">
       <mask id="bar-mask">
-        <rect width="400" height="8" rx="4" fill="white"/>
+        <rect width="${width}" height="8" rx="4" fill="white"/>
       </mask>
       <g mask="url(#bar-mask)">`;
 
   let currentX = 0;
   languages.forEach(lang => {
-    const width = Math.max((parseFloat(lang.percentage) / 100) * 400, 0);
+    const langWidth = Math.max((parseFloat(lang.percentage) / 100) * width, 0);
     const color = LANGUAGE_COLORS[lang.name] || '#8b949e';
-    svg += `<rect x="${currentX}" width="${width}" height="8" fill="${color}"/>`;
-    currentX += width;
+    svg += `<rect x="${currentX}" width="${langWidth}" height="8" fill="${color}"/>`;
+    currentX += langWidth;
   });
 
   svg += `
@@ -256,7 +257,7 @@ function generateLanguagesSection(languages, y, accent) {
   languages.slice(0, 6).forEach((lang, i) => {
     const col = i % 2;
     const row = Math.floor(i / 2);
-    const x = col * 200;
+    const x = col * (width / 2);
     const ly = row * 22; // Slightly more spacing
     const color = LANGUAGE_COLORS[lang.name] || '#8b949e';
 
@@ -264,7 +265,7 @@ function generateLanguagesSection(languages, y, accent) {
     <g transform="translate(${x}, ${ly})">
       <circle cx="5" cy="5" r="5" fill="${color}"/>
       <text x="18" y="9" class="lang-name">${escapeXml(lang.name)}</text>
-      <text x="140" y="9" class="lang-pct" text-anchor="end">${lang.percentage}%</text>
+      <text x="${(width / 2) - 60}" y="9" class="lang-pct" text-anchor="end">${lang.percentage}%</text>
     </g>`;
   });
 
@@ -274,7 +275,9 @@ function generateLanguagesSection(languages, y, accent) {
   return svg;
 }
 
-function generateStreakSection(stats, y, accent) {
+function generateStreakSection(stats, y, accent, internalWidth) {
+  const width = internalWidth - 50;
+  const colWidth = width / 3;
   return `
   <g transform="translate(25, ${y})">
     <text class="card section-title">Contribution Streak</text>
@@ -287,13 +290,13 @@ function generateStreakSection(stats, y, accent) {
       </g>
       
       <!-- Longest Streak -->
-      <g transform="translate(130, 0)">
+      <g transform="translate(${colWidth}, 0)">
         <text class="streak-val">${stats.longestStreak} <tspan font-size="12" font-weight="400" fill="#768390">days</tspan></text>
         <text y="20" class="streak-sub">Longest Streak</text>
       </g>
       
       <!-- Total Contributions -->
-      <g transform="translate(260, 0)">
+      <g transform="translate(${colWidth * 2}, 0)">
         <text class="streak-val">${formatNumber(stats.totalContributions)}</text>
         <text y="20" class="streak-sub">Total Contributions</text>
       </g>
@@ -301,10 +304,10 @@ function generateStreakSection(stats, y, accent) {
   </g>`;
 }
 
-function generateActivitySection(activity, y, accent, borderColor) {
+function generateActivitySection(activity, y, accent, borderColor, internalWidth) {
   if (!activity || activity.length === 0) return '';
 
-  const width = 400;
+  const width = internalWidth - 50;
   const height = 60;
   const max = Math.max(...activity, 1);
   const points = activity.map((val, i) => {
