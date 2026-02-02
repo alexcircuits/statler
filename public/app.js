@@ -36,7 +36,7 @@ function buildCardUrl() {
     if (!toggles.stats.checked) params.set('stats', 'false');
     if (!toggles.languages.checked) params.set('languages', 'false');
     if (!toggles.streak.checked) params.set('streak', 'false');
-    if (toggles.activity.checked) params.set('activity', 'false');
+    if (!toggles.activity.checked) params.set('activity', 'false');
     if (toggles.private.checked) params.set('include_private', 'true');
     if (toggles.fullWidth.checked) params.set('full_width', 'true');
     if (currentColor !== '58a6ff') params.set('accent', currentColor);

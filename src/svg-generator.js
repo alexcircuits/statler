@@ -137,9 +137,10 @@ function generateCard(stats, options = {}) {
   height += 10; // Bottom padding
 
   const cardWidth = fullWidth ? "100%" : "450";
-  const internalWidth = 450; // Reference width for internal coordinates
+  const cardHeight = fullWidth ? "auto" : height;
+  const internalWidth = 450;
 
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${height}" viewBox="0 0 ${internalWidth} ${height}" fill="none">
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}" viewBox="0 0 ${internalWidth} ${height}" fill="none">
   <defs>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
