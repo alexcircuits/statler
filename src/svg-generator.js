@@ -78,6 +78,7 @@ function generateCard(stats, options = {}) {
     showActivity = true,
     includePrivate = false,
     showName = true,
+    fullWidth = false,
     accentColor = '58a6ff',
     username = stats.username
   } = options;
@@ -87,8 +88,8 @@ function generateCard(stats, options = {}) {
   const borderColor = '30363d'; // Border
   const textColor = 'c9d1d9';   // Fg Default
   const textSecondary = '8b949e'; // Fg Muted
-  const titleColor = '58a6ff';  // Accent Fg
   const accent = accentColor.replace('#', '');
+  const titleColor = accent;  // Dynamic name color matching accent
 
   // Handle Private Commits
   // If includePrivate is true, add restricted contributions to total
@@ -135,7 +136,10 @@ function generateCard(stats, options = {}) {
 
   height += 10; // Bottom padding
 
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="450" height="${height}" viewBox="0 0 450 ${height}" fill="none">
+  const cardWidth = fullWidth ? "100%" : "450";
+  const internalWidth = 450; // Reference width for internal coordinates
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${height}" viewBox="0 0 ${internalWidth} ${height}" fill="none">
   <defs>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');

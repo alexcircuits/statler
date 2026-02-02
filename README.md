@@ -55,6 +55,7 @@ Generate cards via the API:
 | `activity` | `true`/`false` |
 | `include_private` | `true`/`false` |
 | `show_name` | `true`/`false` |
+| `full_width` | `true`/`false` |
 
 ## License
 MIT

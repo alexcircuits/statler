@@ -56,7 +56,7 @@ app.get('/api/stats/:username', async (req, res) => {
 // API: Generate SVG card
 app.get('/api/card/:username', async (req, res) => {
     const { username } = req.params;
-    const { stats: showStats, languages: showLanguages, streak: showStreak, activity: showActivity, include_private: includePrivate, show_name: showName, accent } = req.query;
+    const { stats: showStats, languages: showLanguages, streak: showStreak, activity: showActivity, include_private: includePrivate, show_name: showName, full_width: fullWidth, accent } = req.query;
 
     if (!username || !/^[a-zA-Z0-9-]+$/.test(username)) {
         return res.status(400).send('Invalid username');
@@ -85,6 +85,7 @@ app.get('/api/card/:username', async (req, res) => {
             showActivity: showActivity !== 'false',
             includePrivate: includePrivate === 'true',
             showName: showName !== 'false',
+            fullWidth: fullWidth === 'true',
             accentColor
         };
 

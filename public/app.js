@@ -21,7 +21,8 @@ const toggles = {
     languages: document.getElementById('toggle-languages'),
     streak: document.getElementById('toggle-streak'),
     activity: document.getElementById('toggle-activity'),
-    private: document.getElementById('toggle-private')
+    private: document.getElementById('toggle-private'),
+    fullWidth: document.getElementById('toggle-fullwidth')
 };
 
 // Build card URL
@@ -35,8 +36,9 @@ function buildCardUrl() {
     if (!toggles.stats.checked) params.set('stats', 'false');
     if (!toggles.languages.checked) params.set('languages', 'false');
     if (!toggles.streak.checked) params.set('streak', 'false');
-    if (!toggles.activity.checked) params.set('activity', 'false');
+    if (toggles.activity.checked) params.set('activity', 'false');
     if (toggles.private.checked) params.set('include_private', 'true');
+    if (toggles.fullWidth.checked) params.set('full_width', 'true');
     if (currentColor !== '58a6ff') params.set('accent', currentColor);
 
     const queryString = params.toString();
