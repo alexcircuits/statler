@@ -1,4 +1,8 @@
 // Language colors matching GitHub's language colors
+const STAT_HEIGHT = 24;
+const STAT_GAP = 8;
+const STATS_ROWS = 3;
+
 const LANGUAGE_COLORS = {
   JavaScript: '#f1e05a',
   TypeScript: '#3178c6',
@@ -112,10 +116,13 @@ function generateCard(stats, options = {}) {
     height += 35; // Name header
   }
 
+  const statsStartY = height;
+  const statsBlockHeight = (STATS_ROWS * STAT_HEIGHT) + ((STATS_ROWS - 1) * STAT_GAP);
+
   if (showStats) {
     sections.push({ type: 'stats', y: height });
-    // Stats section height: 3 rows * 40px + padding
-    height += 135;
+    // Stats section height
+    height += statsBlockHeight + 20; // Added padding
   }
 
   if (showLanguages && stats.languages?.length > 0) {
@@ -168,9 +175,10 @@ function generateCard(stats, options = {}) {
   </g>` : ''}
   
   <!-- Rank Circle -->
-  <g transform="translate(${internalWidth - 45}, ${showName ? 85 : 45})">
-     <circle cx="0" cy="0" r="22" fill="none" stroke="#21262d" stroke-width="4"/>
-     <circle cx="0" cy="0" r="22" fill="none" stroke="${rank.color}" stroke-dasharray="${2 * Math.PI * 22 * (rank.percentile / 100)} 1000" transform="rotate(-90)" class="rank-circle"/>
+  <!-- Rank Circle -->
+  <g transform="translate(${internalWidth - 60}, ${statsStartY + (statsBlockHeight / 2)})">
+     <circle cx="0" cy="0" r="45" fill="none" stroke="#21262d" stroke-width="4"/>
+     <circle cx="0" cy="0" r="45" fill="none" stroke="${rank.color}" stroke-dasharray="${2 * Math.PI * 45 * (rank.percentile / 100)} 1000" transform="rotate(-90)" class="rank-circle"/>
      <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="card rank-text">${rank.level}</text>
   </g>
 `;
@@ -211,7 +219,7 @@ function generateStatsSection(stats, y, accent) {
     const col = i % 2;
     const row = Math.floor(i / 2);
     const x = col * 165; // Closer together
-    const itemY = row * 40;
+    const itemY = row * (STAT_HEIGHT + STAT_GAP);
 
     svg += `
     <g transform="translate(${x}, ${itemY})">
